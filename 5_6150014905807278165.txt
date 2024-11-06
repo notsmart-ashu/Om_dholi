@@ -1,0 +1,430 @@
+exp 1: dfs bfs
+
+graph = {
+  '1' : ['2','3'],
+  '2' : ['1','4', '5'],
+  '3' : ['1','6','7'],
+  '4' : ['2','8'],
+  '5' : ['2','8'],
+  '6' : [],
+  '7' : [],
+  '8' : []
+}
+
+# visited = set()
+visited = []
+
+#function for dfs
+def dfs(visited, graph, node):
+    if node not in visited:
+        print (node , end=" ")
+        visited.append(node)
+        for neighbour in graph[node]:
+            dfs(visited, graph, neighbour)
+
+print("Following is the Depth-First Search")
+dfs(visited, graph,'1')
+
+#BFS---->
+visited = [] # List for visited nodes.
+queue = []     #Initialize a queue
+
+#function for BFS
+def bfs(visited, graph, node):
+  visited.append(node)
+  queue.append(node)
+
+  while queue:
+    m = queue.pop(0)
+    print (m, end = " ")
+
+    for neighbour in graph[m]:
+      if neighbour not in visited:
+        visited.append(neighbour)
+        queue.append(neighbour)
+
+print("\nFollowing is the Breadth-First Search")
+bfs(visited, graph, '1')
+
+
+
+
+exp 2: Astar 
+
+def aStarAlgo(start_node, stop_node):
+    open_set = set(start_node)
+    closed_set = set()
+    g = {}  # store distance from starting node
+    parents = {}  # parents contains an adjacency map of all nodes
+    # distance of starting node from itself is zero
+    g[start_node] = 0
+    # start_node is root node i.e it has no parent nodes
+    # so start_node is set to its own parent node
+    parents[start_node] = start_node
+    while len(open_set) > 0:
+        n = None
+        # node with lowest f() is found
+        for v in open_set:
+            if n == None or g[v] + heuristic(v) < g[n] + heuristic(n):
+                n = v
+        if n == stop_node or Graph_nodes[n] == None:
+            pass
+        else:
+            for (m, weight) in get_neighbors(n):
+                # nodes 'm' not in first and last set are added to first
+                # n is set its parent
+                if m not in open_set and m not in closed_set:
+                    open_set.add(m)
+                    parents[m] = n
+                    g[m] = g[n] + weight
+                # for each node m,compare its distance from start i.e g(m) to the
+                # from start through n node
+                else:
+                    if g[m] > g[n] + weight:
+                        # update g(m)
+                        g[m] = g[n] + weight
+                        # change parent of m to n
+                        parents[m] = n
+                        # if m in closed set,remove and add to open
+                        if m in closed_set:
+                            closed_set.remove(m)
+                            open_set.add(m)
+        if n == None:
+            print('Path does not exist!')
+            return None
+
+        # if the current node is the stop_node
+        # then we begin reconstructin the path from it to the start_node
+        if n == stop_node:
+            path = []
+            while parents[n] != n:
+                path.append(n)
+                n = parents[n]
+            path.append(start_node)
+            path.reverse()
+            print('Path found: {}'.format(path))
+            return path
+        # remove n from the open_list, and add it to closed_list
+        # because all of his neighbors were inspected
+        open_set.remove(n)
+        closed_set.add(n)
+    print('Path does not exist!')
+    return None
+
+
+# define fuction to return neighbor and its distance
+# from the passed node
+def get_neighbors(v):
+    if v in Graph_nodes:
+        return Graph_nodes[v]
+    else:
+        return None
+
+
+# for simplicity we ll consider heuristic distances given
+# and this function returns heuristic distance for all nodes
+def heuristic(n):
+    H_dist = {
+        'A': 11,
+        'B': 6,
+        'C': 5,
+        'D': 7,
+        'E': 3,
+        'F': 6,
+        'G': 5,
+        'H': 3,
+        'I': 1,
+        'J': 0
+    }
+    return H_dist[n]
+
+
+# Describe your graph here
+Graph_nodes = {
+    'A': [('B', 6), ('F', 3)],
+    'B': [('A', 6), ('C', 3), ('D', 2)],
+    'C': [('B', 3), ('D', 1), ('E', 5)],
+    'D': [('B', 2), ('C', 1), ('E', 8)],
+    'E': [('C', 5), ('D', 8), ('I', 5), ('J', 5)],
+    'F': [('A', 3), ('G', 1), ('H', 7)],
+    'G': [('F', 1), ('I', 3)],
+    'H': [('F', 7), ('I', 2)],
+    'I': [('E', 5), ('G', 3), ('H', 2), ('J', 3)],
+}
+
+aStarAlgo('A', 'J')
+
+
+
+
+
+
+exp 3: N queen 
+
+# Practical No. 3
+# Taking number of queens as input from user
+print ("Enter the number of queens")
+N = int(input())
+# here we create a chessboard
+# NxN matrix with all elements set to 0
+board = [[0]*N for _ in range(N)]
+def attack(i, j):
+    #checking vertically and horizontally
+    for k in range(0,N):
+        if board[i][k]==1 or board[k][j]==1:
+            return True
+    #checking diagonally
+    for k in range(0,N):
+        for l in range(0,N):
+            if (k+l==i+j) or (k-l==i-j):
+                if board[k][l]==1:
+                    return True
+    return False
+def N_queens(n):
+    if n==0:
+        return True
+    for i in range(0,N):
+        for j in range(0,N):
+            if (not(attack(i,j))) and (board[i][j]!=1):
+                board[i][j] = 1
+                if N_queens(n-1)==True:
+                    return True
+                board[i][j] = 0
+    return False
+N_queens(N)
+for i in board:
+    print (i)
+
+
+
+
+
+
+
+
+exp 4: Tic tac toe
+
+
+import math
+
+# Constants for players
+X = 'X'
+O = 'O'
+EMPTY = ' '
+
+
+# Helper function to print the Tic-Tac-Toe board
+def print_board(board):
+    for row in range(3):
+        print(' | '.join(board[row]))
+        if row < 2:
+            print('---------')
+
+
+# Check for a win condition
+def check_winner(board, player):
+    # Check rows, columns and diagonals
+    for i in range(3):
+        if all(board[i][j] == player for j in range(3)) or \
+                all(board[j][i] == player for j in range(3)):
+            return True
+    if board[0][0] == board[1][1] == board[2][2] == player or \
+            board[0][2] == board[1][1] == board[2][0] == player:
+        return True
+    return False
+
+
+# Check if the board is full
+def is_full(board):
+    return all(board[row][col] != EMPTY for row in range(3) for col in range(3))
+
+
+# Check for a draw (no winner and board is full)
+def is_draw(board):
+    return is_full(board) and not (check_winner(board, X) or check_winner(board, O))
+
+
+# Get all possible moves for the current player
+def get_valid_moves(board):
+    return [(row, col) for row in range(3) for col in range(3) if board[row][col] == EMPTY]
+
+
+# Minimax algorithm with alpha-beta pruning
+def minimax_alpha_beta(board, depth, alpha, beta, is_maximizing, player):
+    if check_winner(board, X):
+        return 10 - depth
+    if check_winner(board, O):
+        return depth - 10
+    if is_draw(board):
+        return 0
+
+    if is_maximizing:  # Maximizing for X
+        max_eval = -math.inf
+        for (row, col) in get_valid_moves(board):
+            board[row][col] = X
+            eval = minimax_alpha_beta(board, depth + 1, alpha, beta, False, O)
+            board[row][col] = EMPTY
+            max_eval = max(max_eval, eval)
+            alpha = max(alpha, eval)
+            if beta <= alpha:  # Beta cutoff
+                break
+        return max_eval
+    else:  # Minimizing for O
+        min_eval = math.inf
+        for (row, col) in get_valid_moves(board):
+            board[row][col] = O
+            eval = minimax_alpha_beta(board, depth + 1, alpha, beta, True, X)
+            board[row][col] = EMPTY
+            min_eval = min(min_eval, eval)
+            beta = min(beta, eval)
+            if beta <= alpha:  # Alpha cutoff
+                break
+        return min_eval
+
+
+# Find the best move for the current player
+def best_move(board, player):
+    best_score = -math.inf if player == X else math.inf
+    move = None
+    for (row, col) in get_valid_moves(board):
+        board[row][col] = player
+        score = minimax_alpha_beta(board, 0, -math.inf, math.inf, player == O, X if player == O else O)
+        board[row][col] = EMPTY
+        if (player == X and score > best_score) or (player == O and score < best_score):
+            best_score = score
+            move = (row, col)
+    return move
+
+
+# Main Tic-Tac-Toe game loop
+def play_tic_tac_toe():
+    board = [[EMPTY for _ in range(3)] for _ in range(3)]
+    print("Tic-Tac-Toe Game!")
+    print_board(board)
+
+    while True:
+        # X's move (AI)
+        print("\nX's Move (AI):")
+        move = best_move(board, X)
+        if move:
+            board[move[0]][move[1]] = X
+            print_board(board)
+            if check_winner(board, X):
+                print("X wins!")
+                break
+        else:
+            print("It's a draw!")
+            break
+
+        # O's move (Player)
+        print("\nO's Move (Player):")
+        valid_moves = get_valid_moves(board)
+        if not valid_moves:
+            print("No valid moves left!")
+            break
+
+        move = None
+        while move not in valid_moves:
+            try:
+                row, col = map(int, input("Enter row and column (0-2): ").split())
+                move = (row, col)
+            except ValueError:
+                print("Invalid input. Please enter two numbers between 0 and 2.")
+            if move not in valid_moves:
+                print("Invalid move. Try again.")
+
+        board[row][col] = O
+        print_board(board)
+        if check_winner(board, O):
+            print("O wins!")
+            break
+        elif is_draw(board):
+            print("It's a draw!")
+            break
+
+
+if __name__ == "__main__":
+    play_tic_tac_toe()
+
+
+
+
+exp 5: selection sort
+
+
+def selection_sort(arr):
+    # Loop through each element of the array
+    for i in range(len(arr)):
+        # Assume the first unsorted element is the smallest
+        min_index = i
+
+        # Loop through the unsorted elements to find the smallest element
+        for j in range(i + 1, len(arr)):
+            if arr[j] < arr[min_index]:
+                min_index = j
+
+        # Swap the smallest element with the first unsorted element
+        arr[i], arr[min_index] = arr[min_index], arr[i]
+
+    return arr
+
+array = [64, 25, 12, 22, 11]
+sorted_array = selection_sort(array)
+print("Sorted array:", sorted_array)
+
+
+exp 5: MST Prims
+
+import heapq
+
+
+def prim_mst(graph):
+    # Number of vertices
+    num_vertices = len(graph)
+
+    # Initialize the minimum spanning tree (MST) cost and the result array
+    mst_cost = 0
+    mst_edges = []
+
+    # Start with the first vertex (vertex 0)
+    visited = [False] * num_vertices
+    min_heap = [(0, 0, -1)]  # (cost, current_vertex, previous_vertex)
+
+    while min_heap:
+        # Pop the vertex with the smallest edge cost
+        cost, u, prev = heapq.heappop(min_heap)
+
+        # Skip if it's already in the MST
+        if visited[u]:
+            continue
+
+        # Mark this vertex as visited
+        visited[u] = True
+        mst_cost += cost
+
+        # If it has a previous vertex, add it to the MST edges list
+        if prev != -1:
+            mst_edges.append((prev, u, cost))
+
+        # Push all adjacent edges to the heap
+        for v, weight in graph[u]:
+            if not visited[v]:
+                heapq.heappush(min_heap, (weight, v, u))
+
+    return mst_cost, mst_edges
+
+
+# Example graph represented as an adjacency list
+# Each entry graph[u] contains a list of (vertex, weight) pairs for all vertices adjacent to u
+graph = {
+    0: [(1, 4), (2, 3)],
+    1: [(0, 4), (2, 1), (3, 2)],
+    2: [(0, 3), (1, 1), (3, 4), (4, 5)],
+    3: [(1, 2), (2, 4), (4, 3)],
+    4: [(2, 5), (3, 3)]
+}
+
+mst_cost, mst_edges = prim_mst(graph)
+print("Minimum Spanning Tree Cost:", mst_cost)
+print("Edges in MST:", mst_edges)
+
